@@ -35,6 +35,14 @@
       Add
     </button>
 
+    <!-- Copy Button -->
+    <button mat-button color="primary"
+            [disabled]="mode === 'edit' || !selectedKey"
+            (click)="enableCopyMode()">
+      <mat-icon>content_copy</mat-icon>
+      Copy
+    </button>
+
     <!-- Rename Button -->
     <button mat-button color="primary"
             [disabled]="mode === 'edit' || !selectedKey || filterKeys.length === 0"

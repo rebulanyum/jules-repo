@@ -27,11 +27,12 @@ export class ToolbarComponent implements OnChanges {
   @Input() selectedKey: string | null = null;
   @Output() selectedKeyChange = new EventEmitter<string | null>();
 
-  @Output() saveRename = new EventEmitter<{ oldKey: string; newKey: string }>();
+  @Output() saveRename = new EventEmitter<{ oldKey: string; newKey: string; customValue?: string }>();
   @Output() deleteFilter = new EventEmitter<string>();
 
   mode: 'display' | 'edit' = 'display';
   isAddAction: boolean = false;
+  copiedValue: string | null = null;
 
   filterNameControl = new FormControl('', { nonNullable: true });
 
@@ -51,6 +52,7 @@ export class ToolbarComponent implements OnChanges {
     if (this.filterKeys.length === 0) {
       this.mode = 'edit';
       this.isAddAction = true;
+      this.copiedValue = null;
       this.filterNameControl.setValue('Default');
       this.filterNameControl.markAsTouched();
     }
@@ -92,15 +94,30 @@ export class ToolbarComponent implements OnChanges {
 
   enableAddMode(): void {
     this.isAddAction = true;
+    this.copiedValue = null;
     this.mode = 'edit';
     this.filterNameControl.setValue('<default>');
     this.filterNameControl.markAsTouched();
     this.updateValidation();
   }
 
+  enableCopyMode(): void {
+    if (this.selectedKey) {
+      this.isAddAction = true;
+      this.mode = 'edit';
+      this.copiedValue = this.filters[this.selectedKey] || null;
+
+      const newKeyName = this.selectedKey + ' Copy';
+      this.filterNameControl.setValue(newKeyName);
+      this.filterNameControl.markAsTouched();
+      this.updateValidation();
+    }
+  }
+
   enableEditMode(): void {
     if (this.selectedKey) {
       this.isAddAction = false;
+      this.copiedValue = null;
       this.mode = 'edit';
       this.filterNameControl.setValue(this.selectedKey);
       this.filterNameControl.markAsTouched();
@@ -121,15 +138,18 @@ export class ToolbarComponent implements OnChanges {
     const oldKey = this.isAddAction ? '' : (this.selectedKey || '');
     this.saveRename.emit({
       oldKey: oldKey,
-      newKey: trimmed
+      newKey: trimmed,
+      customValue: this.copiedValue || undefined
     });
 
     this.isAddAction = false;
+    this.copiedValue = null;
     this.mode = 'display';
   }
 
   cancelEdit(): void {
     this.isAddAction = false;
+    this.copiedValue = null;
     if (this.filterKeys.length === 0) {
       this.filterNameControl.setValue('Default');
     } else {

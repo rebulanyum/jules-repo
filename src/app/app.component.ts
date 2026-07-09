@@ -46,8 +46,8 @@ export class AppComponent implements OnInit {
     this.isPopupVisible = true;
   }
 
-  handleRename(event: { oldKey: string; newKey: string }): void {
-    const { oldKey, newKey } = event;
+  handleRename(event: { oldKey: string; newKey: string; customValue?: string }): void {
+    const { oldKey, newKey, customValue } = event;
     if (!newKey) {
       return;
     }
@@ -56,8 +56,8 @@ export class AppComponent implements OnInit {
     const updatedFilters = { ...this.filtersData };
 
     if (!oldKey) {
-      // Adding a brand new filter when the list was empty
-      updatedFilters[newKey] = 'status = "all"';
+      // Adding a brand new filter when the list was empty or via Add/Copy Buttons
+      updatedFilters[newKey] = customValue !== undefined ? customValue : 'status = "all"';
     } else {
       if (oldKey === newKey) {
         return;
