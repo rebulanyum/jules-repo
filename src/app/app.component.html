@@ -36,26 +36,26 @@
 
       <!-- Remaining Popup Content Area -->
       <div class="popup-body">
-        <div class="content-card" *ngIf="selectedFilterKey; else noSelection">
-          <h3>Active Filter Details</h3>
-          <div class="detail-row">
-            <span class="detail-label">Filter Name/Key:</span>
-            <span class="detail-value font-highlight">{{ selectedFilterKey }}</span>
+        @if (selectedFilterKey) {
+          <div class="content-card">
+            <h3>Active Filter Details</h3>
+            <div class="detail-row">
+              <span class="detail-label">Filter Name/Key:</span>
+              <span class="detail-value font-highlight">{{ selectedFilterKey }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Associated Query:</span>
+              <span class="detail-value">
+                <code>{{ filtersData[selectedFilterKey] }}</code>
+              </span>
+            </div>
           </div>
-          <div class="detail-row">
-            <span class="detail-label">Associated Query:</span>
-            <span class="detail-value">
-              <code>{{ filtersData[selectedFilterKey] }}</code>
-            </span>
-          </div>
-        </div>
-
-        <ng-template #noSelection>
+        } @else {
           <div class="no-selection-placeholder">
             <mat-icon class="placeholder-icon">info</mat-icon>
             <p>Please select a filter option from the dropdown menu in the toolbar above to view, rename, or delete.</p>
           </div>
-        </ng-template>
+        }
 
         <!-- Live Server State Mock DB Sync visualizer -->
         <div class="live-sync-section">

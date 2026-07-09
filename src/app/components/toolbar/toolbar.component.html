@@ -1,29 +1,39 @@
 <div class="toolbar-container">
   <!-- Display Mode: mat-select -->
-  <div class="control-section" *ngIf="mode === 'display'">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="toolbar-form-field">
-      <mat-label>Select Filter</mat-label>
-      <mat-select [value]="selectedKey" (selectionChange)="onSelectionChange($event.value)">
-        <mat-option *ngFor="let key of filterKeys" [value]="key">
-          {{ key }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+  @if (mode === 'display') {
+    <div class="control-section">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="toolbar-form-field">
+        <mat-label>Select Filter</mat-label>
+        <mat-select [value]="selectedKey" (selectionChange)="onSelectionChange($event.value)">
+          @for (key of filterKeys; track key) {
+            <mat-option [value]="key">
+              {{ key }}
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  }
 
   <!-- Edit Mode: Text Input -->
-  <div class="control-section" *ngIf="mode === 'edit'">
-    <mat-form-field appearance="outline" [subscriptSizing]="filterNameControl.invalid ? 'fixed' : 'dynamic'" class="toolbar-form-field">
-      <mat-label>Filter Name</mat-label>
-      <input matInput [formControl]="filterNameControl" placeholder="Enter new name" (keyup.enter)="saveEdit()" />
-      <mat-error *ngIf="filterNameControl.hasError('duplicate')">
-        Name must be unique (case-insensitive)
-      </mat-error>
-      <mat-error *ngIf="filterNameControl.hasError('required')">
-        Filter name is required
-      </mat-error>
-    </mat-form-field>
-  </div>
+  @if (mode === 'edit') {
+    <div class="control-section">
+      <mat-form-field appearance="outline" [subscriptSizing]="filterNameControl.invalid ? 'fixed' : 'dynamic'" class="toolbar-form-field">
+        <mat-label>Filter Name</mat-label>
+        <input matInput [formControl]="filterNameControl" placeholder="Enter new name" (keyup.enter)="saveEdit()" />
+        @if (filterNameControl.hasError('duplicate')) {
+          <mat-error>
+            Name must be unique (case-insensitive)
+          </mat-error>
+        }
+        @if (filterNameControl.hasError('required')) {
+          <mat-error>
+            Filter name is required
+          </mat-error>
+        }
+      </mat-form-field>
+    </div>
+  }
 
   <!-- Action Buttons -->
   <div class="buttons-section">
