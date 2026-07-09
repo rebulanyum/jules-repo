@@ -48,24 +48,32 @@ export class AppComponent implements OnInit {
 
   handleRename(event: { oldKey: string; newKey: string }): void {
     const { oldKey, newKey } = event;
-    if (!oldKey || !newKey || oldKey === newKey) {
+    if (!newKey) {
       return;
     }
 
     // Clone the filters dictionary to trigger Angular change detection
     const updatedFilters = { ...this.filtersData };
-    const value = updatedFilters[oldKey];
 
-    // Create new key and copy value
-    updatedFilters[newKey] = value;
-    // Delete old key
-    delete updatedFilters[oldKey];
+    if (!oldKey) {
+      // Adding a brand new filter when the list was empty
+      updatedFilters[newKey] = 'status = "all"';
+    } else {
+      if (oldKey === newKey) {
+        return;
+      }
+      const value = updatedFilters[oldKey];
+      // Create new key and copy value
+      updatedFilters[newKey] = value;
+      // Delete old key
+      delete updatedFilters[oldKey];
+    }
 
     // POST to mock backend
     this.wasabiService.post('/api/filters', { AdvancedFilters: updatedFilters }).subscribe({
       next: (response: WasabiData) => {
         this.filtersData = response.AdvancedFilters || {};
-        // Set selection to renamed item
+        // Set selection to the saved item
         this.selectedFilterKey = newKey;
       },
       error: (err) => {

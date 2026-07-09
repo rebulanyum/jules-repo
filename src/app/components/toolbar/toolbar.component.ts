@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
@@ -22,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './toolbar.component.html',
   styleUrls: ['./toolbar.component.css']
 })
-export class ToolbarComponent {
+export class ToolbarComponent implements OnChanges {
   @Input() filters: Record<string, string> = {};
   @Input() selectedKey: string | null = null;
   @Output() selectedKeyChange = new EventEmitter<string | null>();
@@ -35,6 +35,19 @@ export class ToolbarComponent {
 
   get filterKeys(): string[] {
     return Object.keys(this.filters || {});
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['filters']) {
+      this.checkEmptyFilters();
+    }
+  }
+
+  private checkEmptyFilters(): void {
+    if (this.filterKeys.length === 0) {
+      this.mode = 'edit';
+      this.editText = 'Default';
+    }
   }
 
   onSelectionChange(value: string | null): void {
@@ -55,17 +68,21 @@ export class ToolbarComponent {
       // Prevent saving empty filter name
       return;
     }
-    if (this.selectedKey) {
-      this.saveRename.emit({
-        oldKey: this.selectedKey,
-        newKey: trimmed
-      });
-    }
+
+    this.saveRename.emit({
+      oldKey: this.selectedKey || '',
+      newKey: trimmed
+    });
+
     this.mode = 'display';
   }
 
   cancelEdit(): void {
-    this.mode = 'display';
+    if (this.filterKeys.length === 0) {
+      this.editText = 'Default';
+    } else {
+      this.mode = 'display';
+    }
   }
 
   onDeleteClick(): void {

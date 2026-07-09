@@ -5,29 +5,38 @@
 - Building...
 
 Initial chunk files | Names         |  Raw size
-styles.css          | styles        | 764.39 kB |
+styles.css          | styles        | 764.45 kB |
 polyfills.js        | polyfills     |  88.09 kB |
-main.js             | main          |  25.69 kB |
+main.js             | main          |  26.21 kB |
 
-                    | Initial total | 878.17 kB
+                    | Initial total | 878.75 kB
 
-Application bundle generation complete. [3.972 seconds]
+Application bundle generation complete. [5.573 seconds]
 
 Watch mode enabled. Watching for file changes...
   ➜  Local:   http://localhost:4200/
-- Changes detected. Rebuilding...
+fatal error: all goroutines are asleep - deadlock!
 
-Initial chunk files | Names  |  Raw size
-styles.css          | styles | 764.45 kB |
+goroutine 1 [chan receive]:
+github.com/evanw/esbuild/internal/helpers.(*ThreadSafeWaitGroup).Wait(...)
+	github.com/evanw/esbuild/internal/helpers/waitgroup.go:36
+main.runService.func2()
+	github.com/evanw/esbuild/cmd/esbuild/service.go:114 +0x59
+main.runService(0x1)
+	github.com/evanw/esbuild/cmd/esbuild/service.go:160 +0x4ed
+main.main()
+	github.com/evanw/esbuild/cmd/esbuild/main.go:240 +0xa29
 
-Application bundle generation complete. [0.362 seconds]
+goroutine 18 [chan receive]:
+main.runService.func1()
+	github.com/evanw/esbuild/cmd/esbuild/service.go:98 +0x4a
+created by main.runService
+	github.com/evanw/esbuild/cmd/esbuild/service.go:97 +0x1e5
 
-HMR update sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 25.70 kB |
-
-Application bundle generation complete. [0.468 seconds]
-
-Page reload sent to client(s).
+goroutine 19 [chan receive]:
+main.(*serviceType).sendRequest(0xc0001a8030, {0x93c580, 0xc0006f8600})
+	github.com/evanw/esbuild/cmd/esbuild/service.go:192 +0xfa
+main.runService.func3()
+	github.com/evanw/esbuild/cmd/esbuild/service.go:125 +0x39
+created by main.runService
+	github.com/evanw/esbuild/cmd/esbuild/service.go:122 +0x31c

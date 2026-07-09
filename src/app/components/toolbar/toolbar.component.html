@@ -23,7 +23,7 @@
   <div class="buttons-section">
     <!-- Rename Button -->
     <button mat-button color="primary"
-            [disabled]="mode === 'edit' || !selectedKey"
+            [disabled]="mode === 'edit' || !selectedKey || filterKeys.length === 0"
             (click)="enableEditMode()">
       <mat-icon>edit</mat-icon>
       Rename
@@ -39,7 +39,7 @@
 
     <!-- Cancel Button -->
     <button mat-button color="warn"
-            [disabled]="mode === 'display'"
+            [disabled]="mode === 'display' || filterKeys.length === 0"
             (click)="cancelEdit()">
       <mat-icon>cancel</mat-icon>
       Cancel
@@ -47,7 +47,7 @@
 
     <!-- Delete Button -->
     <button mat-button color="warn"
-            [disabled]="mode === 'edit' || !selectedKey"
+            [disabled]="mode === 'edit' || !selectedKey || filterKeys.length === 0"
             (click)="onDeleteClick()">
       <mat-icon>delete</mat-icon>
       Delete
