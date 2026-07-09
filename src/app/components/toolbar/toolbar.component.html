@@ -13,14 +13,28 @@
 
   <!-- Edit Mode: Text Input -->
   <div class="control-section" *ngIf="mode === 'edit'">
-    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="toolbar-form-field">
+    <mat-form-field appearance="outline" [subscriptSizing]="filterNameControl.invalid ? 'fixed' : 'dynamic'" class="toolbar-form-field">
       <mat-label>Filter Name</mat-label>
-      <input matInput [(ngModel)]="editText" placeholder="Enter new name" (keyup.enter)="saveEdit()" />
+      <input matInput [formControl]="filterNameControl" placeholder="Enter new name" (keyup.enter)="saveEdit()" />
+      <mat-error *ngIf="filterNameControl.hasError('duplicate')">
+        Name must be unique (case-insensitive)
+      </mat-error>
+      <mat-error *ngIf="filterNameControl.hasError('required')">
+        Filter name is required
+      </mat-error>
     </mat-form-field>
   </div>
 
   <!-- Action Buttons -->
   <div class="buttons-section">
+    <!-- Add Button -->
+    <button mat-button color="primary"
+            [disabled]="mode === 'edit'"
+            (click)="enableAddMode()">
+      <mat-icon>add</mat-icon>
+      Add
+    </button>
+
     <!-- Rename Button -->
     <button mat-button color="primary"
             [disabled]="mode === 'edit' || !selectedKey || filterKeys.length === 0"
@@ -31,7 +45,7 @@
 
     <!-- Save Button -->
     <button mat-button color="accent"
-            [disabled]="mode === 'display' || !editText.trim()"
+            [disabled]="mode === 'display' || filterNameControl.invalid"
             (click)="saveEdit()">
       <mat-icon>save</mat-icon>
       Save
