@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import 'devextreme/dist/css/dx.light.css';
+
+/* Import Material Icons */
+@import 'https://fonts.googleapis.com/icon?family=Material+Icons';
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Ensure Angular Material CDK overlays (like dropdowns, datepickers, etc.) appear above DevExtreme overlay elements */
+.cdk-overlay-container {
+  z-index: 20000 !important;
+}

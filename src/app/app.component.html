@@ -1,0 +1,71 @@
+<div class="app-container">
+  <header class="app-header">
+    <h1>Angular + DevExtreme + Angular Material Custom Toolbar</h1>
+    <p>Demonstrating a custom toolbar integrated inside a dx-popup component</p>
+  </header>
+
+  <main class="app-main">
+    <button mat-raised-button color="primary" class="open-btn" (click)="openPopup()">
+      <mat-icon>open_in_new</mat-icon>
+      Open Popup
+    </button>
+  </main>
+
+  <!-- dx-popup integration -->
+  <dx-popup
+    [visible]="isPopupVisible"
+    (onHiding)="isPopupVisible = false"
+    [width]="750"
+    [height]="550"
+    [showTitle]="true"
+    title="Advanced Filters Manager"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false">
+
+    <div *dxTemplate="let data of 'content'" class="popup-content-wrapper">
+      <!--
+        Our custom separate toolbar component, attached at the top of the dx-popup content area,
+        just below the dx-popup title/header.
+      -->
+      <app-toolbar
+        [filters]="filtersData"
+        [(selectedKey)]="selectedFilterKey"
+        (saveRename)="handleRename($event)"
+        (deleteFilter)="handleDelete($event)">
+      </app-toolbar>
+
+      <!-- Remaining Popup Content Area -->
+      <div class="popup-body">
+        <div class="content-card" *ngIf="selectedFilterKey; else noSelection">
+          <h3>Active Filter Details</h3>
+          <div class="detail-row">
+            <span class="detail-label">Filter Name/Key:</span>
+            <span class="detail-value font-highlight">{{ selectedFilterKey }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Associated Query:</span>
+            <span class="detail-value">
+              <code>{{ filtersData[selectedFilterKey] }}</code>
+            </span>
+          </div>
+        </div>
+
+        <ng-template #noSelection>
+          <div class="no-selection-placeholder">
+            <mat-icon class="placeholder-icon">info</mat-icon>
+            <p>Please select a filter option from the dropdown menu in the toolbar above to view, rename, or delete.</p>
+          </div>
+        </ng-template>
+
+        <!-- Live Server State Mock DB Sync visualizer -->
+        <div class="live-sync-section">
+          <div class="sync-header">
+            <span class="dot pulse-animation"></span>
+            <h4>Live Mock Database State (via WasabiService):</h4>
+          </div>
+          <pre class="json-display">{{ filtersData | json }}</pre>
+        </div>
+      </div>
+    </div>
+  </dx-popup>
+</div>

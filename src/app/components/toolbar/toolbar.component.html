@@ -1,0 +1,56 @@
+<div class="toolbar-container">
+  <!-- Display Mode: mat-select -->
+  <div class="control-section" *ngIf="mode === 'display'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="toolbar-form-field">
+      <mat-label>Select Filter</mat-label>
+      <mat-select [value]="selectedKey" (selectionChange)="onSelectionChange($event.value)">
+        <mat-option *ngFor="let key of filterKeys" [value]="key">
+          {{ key }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Edit Mode: Text Input -->
+  <div class="control-section" *ngIf="mode === 'edit'">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="toolbar-form-field">
+      <mat-label>Filter Name</mat-label>
+      <input matInput [(ngModel)]="editText" placeholder="Enter new name" (keyup.enter)="saveEdit()" />
+    </mat-form-field>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="buttons-section">
+    <!-- Rename Button -->
+    <button mat-button color="primary"
+            [disabled]="mode === 'edit' || !selectedKey"
+            (click)="enableEditMode()">
+      <mat-icon>edit</mat-icon>
+      Rename
+    </button>
+
+    <!-- Save Button -->
+    <button mat-button color="accent"
+            [disabled]="mode === 'display' || !editText.trim()"
+            (click)="saveEdit()">
+      <mat-icon>save</mat-icon>
+      Save
+    </button>
+
+    <!-- Cancel Button -->
+    <button mat-button color="warn"
+            [disabled]="mode === 'display'"
+            (click)="cancelEdit()">
+      <mat-icon>cancel</mat-icon>
+      Cancel
+    </button>
+
+    <!-- Delete Button -->
+    <button mat-button color="warn"
+            [disabled]="mode === 'edit' || !selectedKey"
+            (click)="onDeleteClick()">
+      <mat-icon>delete</mat-icon>
+      Delete
+    </button>
+  </div>
+</div>
