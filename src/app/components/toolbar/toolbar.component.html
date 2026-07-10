@@ -38,51 +38,51 @@
   <!-- Action Buttons -->
   <div class="buttons-section">
     <!-- Add Button -->
-    <button mat-button color="primary"
+    <button mat-icon-button color="primary"
+            matTooltip="Add New Filter"
             [disabled]="mode === 'edit'"
             (click)="enableAddMode()">
       <mat-icon>add</mat-icon>
-      Add
     </button>
 
     <!-- Copy Button -->
-    <button mat-button color="primary"
+    <button mat-icon-button color="primary"
+            matTooltip="Copy Selected Filter"
             [disabled]="mode === 'edit' || !selectedKey"
             (click)="enableCopyMode()">
       <mat-icon>content_copy</mat-icon>
-      Copy
     </button>
 
     <!-- Rename Button -->
-    <button mat-button color="primary"
+    <button mat-icon-button color="primary"
+            matTooltip="Rename Selected Filter"
             [disabled]="mode === 'edit' || !selectedKey || filterKeys.length === 0"
             (click)="enableEditMode()">
       <mat-icon>edit</mat-icon>
-      Rename
     </button>
 
     <!-- Save Button -->
-    <button mat-button color="accent"
+    <button mat-icon-button color="accent"
+            matTooltip="Save Changes"
             [disabled]="mode === 'display' || filterNameControl.invalid"
             (click)="saveEdit()">
       <mat-icon>save</mat-icon>
-      Save
     </button>
 
     <!-- Cancel Button -->
-    <button mat-button color="warn"
+    <button mat-icon-button color="warn"
+            matTooltip="Cancel Editing"
             [disabled]="mode === 'display' || filterKeys.length === 0"
             (click)="cancelEdit()">
       <mat-icon>cancel</mat-icon>
-      Cancel
     </button>
 
     <!-- Delete Button -->
-    <button mat-button color="warn"
+    <button mat-icon-button color="warn"
+            matTooltip="Delete Selected Filter"
             [disabled]="mode === 'edit' || !selectedKey || filterKeys.length === 0"
             (click)="onDeleteClick()">
       <mat-icon>delete</mat-icon>
-      Delete
     </button>
   </div>
 </div>

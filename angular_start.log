@@ -15,3 +15,21 @@ Application bundle generation complete. [4.129 seconds]
 
 Watch mode enabled. Watching for file changes...
   ➜  Local:   http://localhost:4200/
+- Changes detected. Rebuilding...
+
+Initial chunk files | Names | Raw size
+main.js             | main  | 30.01 kB |
+
+Application bundle generation complete. [5.218 seconds]
+
+Page reload sent to client(s).
+- Changes detected. Rebuilding...
+
+Initial chunk files | Names | Raw size
+main.js             | main  | 30.04 kB |
+
+Application bundle generation complete. [0.515 seconds]
+
+Page reload sent to client(s).
+12:13:10 PM [vite] ✨ new dependencies optimized: @angular/material/tooltip
+12:13:10 PM [vite] ✨ optimized dependencies changed. reloading
