@@ -33,3 +33,11 @@ Application bundle generation complete. [0.515 seconds]
 Page reload sent to client(s).
 12:13:10 PM [vite] ✨ new dependencies optimized: @angular/material/tooltip
 12:13:10 PM [vite] ✨ optimized dependencies changed. reloading
+- Changes detected. Rebuilding...
+
+Initial chunk files | Names | Raw size
+main.js             | main  | 30.22 kB |
+
+Application bundle generation complete. [3.667 seconds]
+
+Page reload sent to client(s).

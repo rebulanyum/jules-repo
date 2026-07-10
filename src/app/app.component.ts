@@ -43,6 +43,12 @@ export class AppComponent implements OnInit {
   }
 
   openPopup(): void {
+    const keys = Object.keys(this.filtersData || {});
+    if (keys.length > 0) {
+      this.selectedFilterKey = keys[0];
+    } else {
+      this.selectedFilterKey = null;
+    }
     this.isPopupVisible = true;
   }
 
