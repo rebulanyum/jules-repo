@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-toolbar',
+  selector: 'filter-builder-toolbar',
   standalone: true,
   imports: [
     CommonModule,
@@ -21,10 +21,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatIconModule,
     MatTooltipModule
   ],
-  templateUrl: './toolbar.component.html',
-  styleUrls: ['./toolbar.component.css']
+  templateUrl: './filter-builder-toolbar.component.html',
+  styleUrls: ['./filter-builder-toolbar.component.scss']
 })
-export class ToolbarComponent implements OnChanges {
+export class FilterBuilderToolbarComponent implements OnChanges {
   @Input() filters: Record<string, string> = {};
   @Input() selectedKey: string | null = null;
   @Output() selectedKeyChange = new EventEmitter<string | null>();
@@ -36,7 +36,7 @@ export class ToolbarComponent implements OnChanges {
   isAddAction: boolean = false;
   copiedValue: string | null = null;
 
-  filterNameControl = new FormControl('', { nonNullable: true });
+  filterNameControl = new FormControl<string | null>(null);
 
   get filterKeys(): string[] {
     return Object.keys(this.filters || {});
@@ -132,7 +132,8 @@ export class ToolbarComponent implements OnChanges {
       return;
     }
 
-    const trimmed = this.filterNameControl.value.trim();
+    const value = this.filterNameControl.value;
+    const trimmed = (value || '').trim();
     if (!trimmed) {
       return;
     }
@@ -146,6 +147,7 @@ export class ToolbarComponent implements OnChanges {
 
     this.isAddAction = false;
     this.copiedValue = null;
+    this.filterNameControl.setValue(null);
     this.mode = 'display';
   }
 
@@ -155,6 +157,7 @@ export class ToolbarComponent implements OnChanges {
     if (this.filterKeys.length === 0) {
       this.filterNameControl.setValue('Default');
     } else {
+      this.filterNameControl.setValue(null);
       this.mode = 'display';
     }
   }

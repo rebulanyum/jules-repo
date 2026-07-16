@@ -2,7 +2,7 @@
   <!-- Display Mode: mat-select -->
   @if (mode === 'display') {
     <div class="control-section">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic" class="toolbar-form-field">
+      <mat-form-field class="toolbar-form-field">
         <mat-label>Select Filter</mat-label>
         <mat-select [value]="selectedKey" (selectionChange)="onSelectionChange($event.value)">
           @for (key of filterKeys; track key) {
@@ -18,7 +18,7 @@
   <!-- Edit Mode: Text Input -->
   @if (mode === 'edit') {
     <div class="control-section">
-      <mat-form-field appearance="outline" [subscriptSizing]="filterNameControl.invalid ? 'fixed' : 'dynamic'" class="toolbar-form-field">
+      <mat-form-field class="toolbar-form-field">
         <mat-label>Filter Name</mat-label>
         <input matInput [formControl]="filterNameControl" placeholder="Enter new name" (keyup.enter)="saveEdit()" />
         @if (filterNameControl.hasError('duplicate')) {

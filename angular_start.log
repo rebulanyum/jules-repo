@@ -1,43 +1,23 @@
 
-> angular-app@0.0.0 start
-> ng serve
+Warning: This is a simple server for use in testing or debugging Angular applications
+locally. It hasn't been reviewed for security issues.
+
+Binding this server to an open connection can result in compromising your application or
+computer. Using a different host than the one passed to the "--host" flag might result in
+websocket connection issues. You might need to use "--disable-host-check" if that's the
+case.
 
 - Building...
 
 Initial chunk files | Names         |  Raw size
 styles.css          | styles        | 764.45 kB |
 polyfills.js        | polyfills     |  88.09 kB |
-main.js             | main          |  29.92 kB |
+main.js             | main          |  30.54 kB |
 
-                    | Initial total | 882.46 kB
+                    | Initial total | 883.07 kB
 
-Application bundle generation complete. [4.129 seconds]
+Application bundle generation complete. [8.932 seconds]
 
 Watch mode enabled. Watching for file changes...
   ➜  Local:   http://localhost:4200/
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 30.01 kB |
-
-Application bundle generation complete. [5.218 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 30.04 kB |
-
-Application bundle generation complete. [0.515 seconds]
-
-Page reload sent to client(s).
-12:13:10 PM [vite] ✨ new dependencies optimized: @angular/material/tooltip
-12:13:10 PM [vite] ✨ optimized dependencies changed. reloading
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 30.22 kB |
-
-Application bundle generation complete. [3.667 seconds]
-
-Page reload sent to client(s).
+  ➜  Network: http://192.168.0.2:4200/

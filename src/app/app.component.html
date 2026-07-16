@@ -27,12 +27,12 @@
         Our custom separate toolbar component, attached at the top of the dx-popup content area,
         just below the dx-popup title/header.
       -->
-      <app-toolbar
+      <filter-builder-toolbar
         [filters]="filtersData"
         [(selectedKey)]="selectedFilterKey"
         (saveRename)="handleRename($event)"
         (deleteFilter)="handleDelete($event)">
-      </app-toolbar>
+      </filter-builder-toolbar>
 
       <!-- Remaining Popup Content Area -->
       <div class="popup-body">

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { DxPopupModule } from 'devextreme-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ToolbarComponent } from './components/toolbar/toolbar.component';
-import { WasabiService, WasabiData } from './services/wasabi.service';
+import { FilterBuilderToolbarComponent } from './components/filter-builder-toolbar/filter-builder-toolbar.component';
+import { WasabiService, FirmGridSetting } from './services/wasabi.service';
 import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
@@ -15,10 +15,10 @@ import { confirm } from 'devextreme/ui/dialog';
     DxPopupModule,
     MatButtonModule,
     MatIconModule,
-    ToolbarComponent
+    FilterBuilderToolbarComponent
   ],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
   isPopupVisible = false;
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
 
   loadFilters(): void {
     this.wasabiService.get().subscribe({
-      next: (data: WasabiData) => {
+      next: (data: FirmGridSetting) => {
         this.filtersData = data.AdvancedFilters || {};
       },
       error: (err) => {
@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
 
     // POST to mock backend
     this.wasabiService.post('/api/filters', { AdvancedFilters: updatedFilters }).subscribe({
-      next: (response: WasabiData) => {
+      next: (response: FirmGridSetting) => {
         this.filtersData = response.AdvancedFilters || {};
         // Set selection to the saved item
         this.selectedFilterKey = newKey;
@@ -101,7 +101,7 @@ export class AppComponent implements OnInit {
 
         // POST to mock backend
         this.wasabiService.post('/api/filters', { AdvancedFilters: updatedFilters }).subscribe({
-          next: (response: WasabiData) => {
+          next: (response: FirmGridSetting) => {
             this.filtersData = response.AdvancedFilters || {};
             // Set selection to null as requested
             this.selectedFilterKey = null;
