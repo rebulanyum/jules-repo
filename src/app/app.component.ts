@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
 
   onQueryValueInput(newValue: string): void {
     this.editingQueryValue = newValue;
-    if (this.toolbarComponent && this.toolbarComponent.mode === 'display') {
+    if (this.toolbarComponent.mode === 'display') {
       if (this.selectedFilterKey) {
         this.toolbarComponent.enableEditMode();
       } else {
