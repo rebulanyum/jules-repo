@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DxPopupModule } from 'devextreme-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { FilterBuilderToolbarComponent } from './components/filter-builder-toolbar/filter-builder-toolbar.component';
 import { WasabiService, FirmGridSetting } from './services/wasabi.service';
 import { confirm } from 'devextreme/ui/dialog';
@@ -15,6 +17,8 @@ import { confirm } from 'devextreme/ui/dialog';
     DxPopupModule,
     MatButtonModule,
     MatIconModule,
+    MatInputModule,
+    MatFormFieldModule,
     FilterBuilderToolbarComponent
   ],
   templateUrl: './app.component.html',
@@ -24,6 +28,9 @@ export class AppComponent implements OnInit {
   isPopupVisible = false;
   filtersData: Record<string, string> = {};
   selectedFilterKey: string | null = null;
+  editingQueryValue: string | null = null;
+
+  @ViewChild('toolbar') toolbarComponent!: FilterBuilderToolbarComponent;
 
   constructor(private wasabiService: WasabiService) {}
 
@@ -46,10 +53,32 @@ export class AppComponent implements OnInit {
     const keys = Object.keys(this.filtersData || {});
     if (keys.length > 0) {
       this.selectedFilterKey = keys[0];
+      this.editingQueryValue = this.filtersData[keys[0]] || null;
     } else {
       this.selectedFilterKey = null;
+      this.editingQueryValue = null;
     }
     this.isPopupVisible = true;
+  }
+
+  onSelectedKeyChange(newKey: string | null): void {
+    this.selectedFilterKey = newKey;
+    if (newKey) {
+      this.editingQueryValue = this.filtersData[newKey] || null;
+    } else {
+      this.editingQueryValue = null;
+    }
+  }
+
+  onQueryValueInput(newValue: string): void {
+    this.editingQueryValue = newValue;
+    if (this.toolbarComponent && this.toolbarComponent.mode === 'display') {
+      if (this.selectedFilterKey) {
+        this.toolbarComponent.enableEditMode();
+      } else {
+        this.toolbarComponent.enableAddMode();
+      }
+    }
   }
 
   handleRename(event: { oldKey: string; newKey: string; customValue?: string }): void {
@@ -62,17 +91,14 @@ export class AppComponent implements OnInit {
     const updatedFilters = { ...this.filtersData };
 
     if (!oldKey) {
-      // Adding a brand new filter when the list was empty or via Add/Copy Buttons
+      // Adding a brand new filter when the list was empty or via Add/Copy/Query Value editing
       updatedFilters[newKey] = customValue !== undefined ? customValue : 'status = "all"';
     } else {
-      if (oldKey === newKey) {
-        return;
+      const originalValue = updatedFilters[oldKey];
+      updatedFilters[newKey] = customValue !== undefined ? customValue : originalValue;
+      if (oldKey !== newKey) {
+        delete updatedFilters[oldKey];
       }
-      const value = updatedFilters[oldKey];
-      // Create new key and copy value
-      updatedFilters[newKey] = value;
-      // Delete old key
-      delete updatedFilters[oldKey];
     }
 
     // POST to mock backend
@@ -81,11 +107,20 @@ export class AppComponent implements OnInit {
         this.filtersData = response.AdvancedFilters || {};
         // Set selection to the saved item
         this.selectedFilterKey = newKey;
+        this.editingQueryValue = this.filtersData[newKey] || null;
       },
       error: (err) => {
         console.error('Failed to update filter name', err);
       }
     });
+  }
+
+  handleCancel(): void {
+    if (this.selectedFilterKey) {
+      this.editingQueryValue = this.filtersData[this.selectedFilterKey] || null;
+    } else {
+      this.editingQueryValue = null;
+    }
   }
 
   handleDelete(key: string): void {
@@ -105,6 +140,7 @@ export class AppComponent implements OnInit {
             this.filtersData = response.AdvancedFilters || {};
             // Set selection to null as requested
             this.selectedFilterKey = null;
+            this.editingQueryValue = null;
           },
           error: (err) => {
             console.error('Failed to delete filter', err);

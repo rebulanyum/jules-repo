@@ -28,34 +28,43 @@
         just below the dx-popup title/header.
       -->
       <filter-builder-toolbar
+        #toolbar
         [filters]="filtersData"
-        [(selectedKey)]="selectedFilterKey"
+        [selectedKey]="selectedFilterKey"
+        [queryValue]="editingQueryValue"
+        (selectedKeyChange)="onSelectedKeyChange($event)"
         (saveRename)="handleRename($event)"
-        (deleteFilter)="handleDelete($event)">
+        (deleteFilter)="handleDelete($event)"
+        (editCanceled)="handleCancel()">
       </filter-builder-toolbar>
 
       <!-- Remaining Popup Content Area -->
       <div class="popup-body">
-        @if (selectedFilterKey) {
-          <div class="content-card">
-            <h3>Active Filter Details</h3>
-            <div class="detail-row">
+        <div class="content-card">
+          <h3>Filter Value Builder</h3>
+
+          @if (selectedFilterKey) {
+            <div class="detail-row" style="margin-bottom: 12px;">
               <span class="detail-label">Filter Name/Key:</span>
               <span class="detail-value font-highlight">{{ selectedFilterKey }}</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label">Associated Query:</span>
-              <span class="detail-value">
-                <code>{{ filtersData[selectedFilterKey] }}</code>
-              </span>
+          } @else {
+            <div class="detail-row" style="margin-bottom: 12px;">
+              <span class="detail-label">Filter Name/Key:</span>
+              <span class="detail-value font-highlight" style="color: #888; font-style: italic;">No Filter Selected (Editing will Add)</span>
             </div>
+          }
+
+          <div class="detail-row">
+            <mat-form-field class="query-form-field" style="width: 100%;">
+              <mat-label>Associated Query Value</mat-label>
+              <input matInput
+                     [value]="editingQueryValue || ''"
+                     (input)="onQueryValueInput($any($event.target).value)"
+                     placeholder="e.g. status = 'active'" />
+            </mat-form-field>
           </div>
-        } @else {
-          <div class="no-selection-placeholder">
-            <mat-icon class="placeholder-icon">info</mat-icon>
-            <p>Please select a filter option from the dropdown menu in the toolbar above to view, rename, or delete.</p>
-          </div>
-        }
+        </div>
 
         <!-- Live Server State Mock DB Sync visualizer -->
         <div class="live-sync-section">

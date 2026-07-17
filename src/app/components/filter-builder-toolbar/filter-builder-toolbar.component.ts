@@ -7,6 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
   selector: 'filter-builder-toolbar',
@@ -27,16 +28,22 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 export class FilterBuilderToolbarComponent implements OnChanges {
   @Input() filters: Record<string, string> = {};
   @Input() selectedKey: string | null = null;
-  @Output() selectedKeyChange = new EventEmitter<string | null>();
+  @Input() queryValue: string | null = null;
 
+  @Output() selectedKeyChange = new EventEmitter<string | null>();
   @Output() saveRename = new EventEmitter<{ oldKey: string; newKey: string; customValue?: string }>();
   @Output() deleteFilter = new EventEmitter<string>();
+  @Output() editCanceled = new EventEmitter<void>();
 
   mode: 'display' | 'edit' = 'display';
   isAddAction: boolean = false;
   copiedValue: string | null = null;
 
   filterNameControl = new FormControl<string | null>(null);
+
+  get isQueryValueValid(): boolean {
+    return this.queryValue !== null && this.queryValue !== undefined && this.queryValue.trim().length > 0;
+  }
 
   get filterKeys(): string[] {
     return Object.keys(this.filters || {});
@@ -101,6 +108,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
     this.filterNameControl.setValue('<default>');
     this.filterNameControl.markAsTouched();
     this.updateValidation();
+    this.selectedKeyChange.emit(null);
   }
 
   enableCopyMode(): void {
@@ -128,7 +136,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
   }
 
   saveEdit(): void {
-    if (this.filterNameControl.invalid) {
+    if (this.filterNameControl.invalid || !this.isQueryValueValid) {
       return;
     }
 
@@ -139,10 +147,19 @@ export class FilterBuilderToolbarComponent implements OnChanges {
     }
 
     const oldKey = this.isAddAction ? '' : (this.selectedKey || '');
+
+    // Prioritize queryValue edited in the textbox, fall back to copiedValue or original
+    let customValueToSave = undefined;
+    if (this.queryValue !== null) {
+      customValueToSave = this.queryValue;
+    } else if (this.copiedValue !== null) {
+      customValueToSave = this.copiedValue;
+    }
+
     this.saveRename.emit({
       oldKey: oldKey,
       newKey: trimmed,
-      customValue: this.copiedValue || undefined
+      customValue: customValueToSave
     });
 
     this.isAddAction = false;
@@ -151,7 +168,32 @@ export class FilterBuilderToolbarComponent implements OnChanges {
     this.mode = 'display';
   }
 
-  cancelEdit(): void {
+  onCancelClick(): void {
+    // Check if key name has changed
+    const nameChanged = this.isAddAction
+      ? (this.filterNameControl.value !== '<default>' && this.filterNameControl.value !== 'Default')
+      : (this.filterNameControl.value !== this.selectedKey);
+
+    // Check if query value has changed
+    const originalValue = this.isAddAction
+      ? null
+      : (this.selectedKey ? (this.filters[this.selectedKey] || null) : null);
+
+    const valueChanged = (this.queryValue !== originalValue) &&
+                         ((this.queryValue || '').trim() !== (originalValue || '').trim());
+
+    if (nameChanged || valueChanged) {
+      confirm('Are you sure you want to discard your changes?', 'Discard Changes').then((confirmed: boolean) => {
+        if (confirmed) {
+          this.revertState();
+        }
+      });
+    } else {
+      this.revertState();
+    }
+  }
+
+  private revertState(): void {
     this.isAddAction = false;
     this.copiedValue = null;
     if (this.filterKeys.length === 0) {
@@ -160,6 +202,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       this.filterNameControl.setValue(null);
       this.mode = 'display';
     }
+    this.editCanceled.emit();
   }
 
   onDeleteClick(): void {

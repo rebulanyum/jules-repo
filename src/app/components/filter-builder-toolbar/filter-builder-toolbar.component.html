@@ -64,7 +64,7 @@
     <!-- Save Button -->
     <button mat-icon-button color="accent"
             matTooltip="Save Changes"
-            [disabled]="mode === 'display' || filterNameControl.invalid"
+            [disabled]="mode === 'display' || filterNameControl.invalid || !isQueryValueValid"
             (click)="saveEdit()">
       <mat-icon>save</mat-icon>
     </button>
@@ -73,7 +73,7 @@
     <button mat-icon-button color="warn"
             matTooltip="Cancel Editing"
             [disabled]="mode === 'display' || filterKeys.length === 0"
-            (click)="cancelEdit()">
+            (click)="onCancelClick()">
       <mat-icon>cancel</mat-icon>
     </button>
 
