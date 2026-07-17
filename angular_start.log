@@ -12,36 +12,12 @@ case.
 Initial chunk files | Names         |  Raw size
 styles.css          | styles        | 764.45 kB |
 polyfills.js        | polyfills     |  88.09 kB |
-main.js             | main          |  33.94 kB |
+main.js             | main          |  35.88 kB |
 
-                    | Initial total | 886.48 kB
+                    | Initial total | 888.42 kB
 
-Application bundle generation complete. [9.839 seconds]
+Application bundle generation complete. [9.040 seconds]
 
 Watch mode enabled. Watching for file changes...
   ➜  Local:   http://localhost:4200/
   ➜  Network: http://192.168.0.2:4200/
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 34.14 kB |
-
-Application bundle generation complete. [3.860 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 34.17 kB |
-
-Application bundle generation complete. [0.771 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 34.14 kB |
-
-Application bundle generation complete. [4.060 seconds]
-
-Page reload sent to client(s).

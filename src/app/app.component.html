@@ -59,9 +59,13 @@
             <mat-form-field class="query-form-field" style="width: 100%;">
               <mat-label>Associated Query Value</mat-label>
               <input matInput
-                     [value]="editingQueryValue || ''"
-                     (input)="onQueryValueInput($any($event.target).value)"
+                     [formControl]="queryValueControl"
                      placeholder="e.g. status = 'active'" />
+              @if (queryValueControl.hasError('required')) {
+                <mat-error>
+                  Query value is required
+                </mat-error>
+              }
             </mat-form-field>
           </div>
         </div>

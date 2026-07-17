@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
 import { DxPopupModule } from 'devextreme-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,6 +15,7 @@ import { confirm } from 'devextreme/ui/dialog';
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     DxPopupModule,
     MatButtonModule,
     MatIconModule,
@@ -30,12 +32,34 @@ export class AppComponent implements OnInit {
   selectedFilterKey: string | null = null;
   editingQueryValue: string | null = null;
 
+  queryValueControl = new FormControl<string | null>('', [this.queryValueValidator()]);
+
   @ViewChild('toolbar') toolbarComponent!: FilterBuilderToolbarComponent;
 
   constructor(private wasabiService: WasabiService) {}
 
+  queryValueValidator(): ValidatorFn {
+    return (control: AbstractControl) => {
+      const val = control.value;
+      if (val === null || val === undefined || val.trim().length === 0) {
+        return { required: true };
+      }
+      return null;
+    };
+  }
+
   ngOnInit(): void {
     this.loadFilters();
+    this.queryValueControl.valueChanges.subscribe(newValue => {
+      this.editingQueryValue = newValue;
+      if (this.toolbarComponent.mode === 'display') {
+        if (this.selectedFilterKey) {
+          this.toolbarComponent.enableEditMode();
+        } else {
+          this.toolbarComponent.enableAddMode();
+        }
+      }
+    });
   }
 
   loadFilters(): void {
@@ -54,9 +78,13 @@ export class AppComponent implements OnInit {
     if (keys.length > 0) {
       this.selectedFilterKey = keys[0];
       this.editingQueryValue = this.filtersData[keys[0]] || null;
+      this.queryValueControl.setValue(this.editingQueryValue, { emitEvent: false });
+      this.queryValueControl.markAsUntouched();
     } else {
       this.selectedFilterKey = null;
       this.editingQueryValue = null;
+      this.queryValueControl.setValue('', { emitEvent: false });
+      this.queryValueControl.markAsTouched();
     }
     this.isPopupVisible = true;
   }
@@ -65,19 +93,12 @@ export class AppComponent implements OnInit {
     this.selectedFilterKey = newKey;
     if (newKey) {
       this.editingQueryValue = this.filtersData[newKey] || null;
+      this.queryValueControl.setValue(this.editingQueryValue, { emitEvent: false });
+      this.queryValueControl.markAsUntouched();
     } else {
       this.editingQueryValue = null;
-    }
-  }
-
-  onQueryValueInput(newValue: string): void {
-    this.editingQueryValue = newValue;
-    if (this.toolbarComponent.mode === 'display') {
-      if (this.selectedFilterKey) {
-        this.toolbarComponent.enableEditMode();
-      } else {
-        this.toolbarComponent.enableAddMode();
-      }
+      this.queryValueControl.setValue('', { emitEvent: false });
+      this.queryValueControl.markAsTouched();
     }
   }
 
@@ -108,6 +129,8 @@ export class AppComponent implements OnInit {
         // Set selection to the saved item
         this.selectedFilterKey = newKey;
         this.editingQueryValue = this.filtersData[newKey] || null;
+        this.queryValueControl.setValue(this.editingQueryValue, { emitEvent: false });
+        this.queryValueControl.markAsUntouched();
       },
       error: (err) => {
         console.error('Failed to update filter name', err);
@@ -118,8 +141,12 @@ export class AppComponent implements OnInit {
   handleCancel(): void {
     if (this.selectedFilterKey) {
       this.editingQueryValue = this.filtersData[this.selectedFilterKey] || null;
+      this.queryValueControl.setValue(this.editingQueryValue, { emitEvent: false });
+      this.queryValueControl.markAsUntouched();
     } else {
       this.editingQueryValue = null;
+      this.queryValueControl.setValue('', { emitEvent: false });
+      this.queryValueControl.markAsUntouched();
     }
   }
 
@@ -141,6 +168,8 @@ export class AppComponent implements OnInit {
             // Set selection to null as requested
             this.selectedFilterKey = null;
             this.editingQueryValue = null;
+            this.queryValueControl.setValue('', { emitEvent: false });
+            this.queryValueControl.markAsUntouched();
           },
           error: (err) => {
             console.error('Failed to delete filter', err);
