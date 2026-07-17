@@ -21,3 +21,19 @@ Application bundle generation complete. [9.040 seconds]
 Watch mode enabled. Watching for file changes...
   ➜  Local:   http://localhost:4200/
   ➜  Network: http://192.168.0.2:4200/
+- Changes detected. Rebuilding...
+
+Initial chunk files | Names | Raw size
+main.js             | main  | 35.69 kB |
+
+Application bundle generation complete. [3.982 seconds]
+
+Page reload sent to client(s).
+- Changes detected. Rebuilding...
+
+Initial chunk files | Names | Raw size
+main.js             | main  | 35.62 kB |
+
+Application bundle generation complete. [0.526 seconds]
+
+Page reload sent to client(s).

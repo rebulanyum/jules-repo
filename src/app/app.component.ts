@@ -102,21 +102,21 @@ export class AppComponent implements OnInit {
     }
   }
 
-  handleRename(event: { oldKey: string; newKey: string; customValue?: string }): void {
-    const { oldKey, newKey, customValue } = event;
+  handleRename(event: { oldKey: string; newKey: string }): void {
+    const { oldKey, newKey } = event;
     if (!newKey) {
       return;
     }
 
     // Clone the filters dictionary to trigger Angular change detection
     const updatedFilters = { ...this.filtersData };
+    const queryValueToSave = this.editingQueryValue || 'status = "all"';
 
     if (!oldKey) {
-      // Adding a brand new filter when the list was empty or via Add/Copy/Query Value editing
-      updatedFilters[newKey] = customValue !== undefined ? customValue : 'status = "all"';
+      // Adding a brand new filter
+      updatedFilters[newKey] = queryValueToSave;
     } else {
-      const originalValue = updatedFilters[oldKey];
-      updatedFilters[newKey] = customValue !== undefined ? customValue : originalValue;
+      updatedFilters[newKey] = queryValueToSave;
       if (oldKey !== newKey) {
         delete updatedFilters[oldKey];
       }

@@ -31,7 +31,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
   @Input() queryValue: string | null = null;
 
   @Output() selectedKeyChange = new EventEmitter<string | null>();
-  @Output() saveRename = new EventEmitter<{ oldKey: string; newKey: string; customValue?: string }>();
+  @Output() saveRename = new EventEmitter<{ oldKey: string; newKey: string }>();
   @Output() deleteFilter = new EventEmitter<string>();
   @Output() editCanceled = new EventEmitter<void>();
 
@@ -148,18 +148,9 @@ export class FilterBuilderToolbarComponent implements OnChanges {
 
     const oldKey = this.isAddAction ? '' : (this.selectedKey || '');
 
-    // Prioritize queryValue edited in the textbox, fall back to copiedValue or original
-    let customValueToSave = undefined;
-    if (this.queryValue !== null) {
-      customValueToSave = this.queryValue;
-    } else if (this.copiedValue !== null) {
-      customValueToSave = this.copiedValue;
-    }
-
     this.saveRename.emit({
       oldKey: oldKey,
-      newKey: trimmed,
-      customValue: customValueToSave
+      newKey: trimmed
     });
 
     this.isAddAction = false;
@@ -176,7 +167,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
 
     // Check if query value has changed
     const originalValue = this.isAddAction
-      ? null
+      ? (this.copiedValue !== null ? this.copiedValue : null)
       : (this.selectedKey ? (this.filters[this.selectedKey] || null) : null);
 
     const valueChanged = (this.queryValue !== originalValue) &&
