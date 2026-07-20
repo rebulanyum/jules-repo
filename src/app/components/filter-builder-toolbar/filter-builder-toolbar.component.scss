@@ -1,0 +1,44 @@
+.toolbar-container {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.control-section {
+  flex: 1 1 250px;
+  min-width: 200px;
+  max-width: 400px;
+}
+
+.toolbar-form-field {
+  width: 100%;
+}
+
+.toolbar-select-box {
+  width: 100%;
+}
+
+.buttons-section {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Ensure material buttons with icons have a nice spacing */
+button[mat-button] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button[mat-button] mat-icon {
+  margin-right: 4px;
+}

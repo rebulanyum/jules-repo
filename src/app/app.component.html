@@ -1,0 +1,81 @@
+<div class="app-container">
+  <header class="app-header">
+    <h1>Angular + DevExtreme + Angular Material Custom Toolbar</h1>
+    <p>Demonstrating a custom toolbar integrated inside a dx-popup component</p>
+  </header>
+
+  <main class="app-main">
+    <button mat-raised-button color="primary" class="open-btn" (click)="openPopup()">
+      <mat-icon>open_in_new</mat-icon>
+      Open Popup
+    </button>
+  </main>
+
+  <!-- dx-popup integration -->
+  <dx-popup
+    [visible]="isPopupVisible"
+    (onHiding)="isPopupVisible = false"
+    [width]="750"
+    [height]="550"
+    [showTitle]="true"
+    title="Advanced Filters Manager"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="false">
+
+    <div *dxTemplate="let data of 'content'" class="popup-content-wrapper">
+      <!--
+        Our custom separate toolbar component, attached at the top of the dx-popup content area,
+        just below the dx-popup title/header.
+      -->
+      <filter-builder-toolbar
+        #toolbar
+        [filters]="filtersData"
+        [selectedKey]="selectedFilterKey"
+        [queryValue]="filterValue"
+        (selectedKeyChange)="onSelectedKeyChange($event)"
+        (saveRename)="handleRename($event)"
+        (deleteFilter)="handleDelete($event)"
+        (editCanceled)="handleCancel()">
+      </filter-builder-toolbar>
+
+      <!-- Remaining Popup Content Area -->
+      <div class="popup-body">
+        <div class="content-card">
+          <h3>Filter Value Builder</h3>
+
+          @if (selectedFilterKey) {
+            <div class="detail-row" style="margin-bottom: 12px;">
+              <span class="detail-label">Filter Name/Key:</span>
+              <span class="detail-value font-highlight">{{ selectedFilterKey }}</span>
+            </div>
+          } @else {
+            <div class="detail-row" style="margin-bottom: 12px;">
+              <span class="detail-label">Filter Name/Key:</span>
+              <span class="detail-value font-highlight" style="color: #888; font-style: italic;">No Filter Selected (Editing will Add)</span>
+            </div>
+          }
+
+          <div class="detail-row" style="margin-top: 15px;">
+            <span class="detail-label" style="display: block; margin-bottom: 8px;">Associated Query Value:</span>
+            <div>
+              <dx-filter-builder
+                [fields]="fields"
+                [value]="filterValue"
+                (valueChange)="onQueryValueChange($event)">
+              </dx-filter-builder>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Server State Mock DB Sync visualizer -->
+        <div class="live-sync-section">
+          <div class="sync-header">
+            <span class="dot pulse-animation"></span>
+            <h4>Live Mock Database State (via WasabiService):</h4>
+          </div>
+          <pre class="json-display">{{ filtersData | json }}</pre>
+        </div>
+      </div>
+    </div>
+  </dx-popup>
+</div>
