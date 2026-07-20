@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms';
-import { DxPopupModule } from 'devextreme-angular';
+import { DxPopupModule, DxFilterBuilderModule } from 'devextreme-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -17,6 +17,7 @@ import { confirm } from 'devextreme/ui/dialog';
     CommonModule,
     ReactiveFormsModule,
     DxPopupModule,
+    DxFilterBuilderModule,
     MatButtonModule,
     MatIconModule,
     MatInputModule,
@@ -28,11 +29,18 @@ import { confirm } from 'devextreme/ui/dialog';
 })
 export class AppComponent implements OnInit {
   isPopupVisible = false;
-  filtersData: Record<string, string> = {};
+  filtersData: Record<string, any> = {};
   selectedFilterKey: string | null = null;
-  editingQueryValue: string | null = null;
+  editingQueryValue: any = null;
 
-  queryValueControl = new FormControl<string | null>('', [this.queryValueValidator()]);
+  fields: any[] = [
+    { dataField: 'status', dataType: 'string', caption: 'Status' },
+    { dataField: 'plan', dataType: 'string', caption: 'Plan' },
+    { dataField: 'type', dataType: 'string', caption: 'Type' },
+    { dataField: 'score', dataType: 'number', caption: 'Score' }
+  ];
+
+  queryValueControl = new FormControl<any>(null, [this.queryValueValidator()]);
 
   @ViewChild('toolbar') toolbarComponent!: FilterBuilderToolbarComponent;
 
@@ -41,7 +49,13 @@ export class AppComponent implements OnInit {
   queryValueValidator(): ValidatorFn {
     return (control: AbstractControl) => {
       const val = control.value;
-      if (val === null || val === undefined || val.trim().length === 0) {
+      if (val === null || val === undefined) {
+        return { required: true };
+      }
+      if (Array.isArray(val)) {
+        return val.length > 0 ? null : { required: true };
+      }
+      if (typeof val === 'string' && val.trim().length === 0) {
         return { required: true };
       }
       return null;
@@ -50,16 +64,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFilters();
-    this.queryValueControl.valueChanges.subscribe(newValue => {
-      this.editingQueryValue = newValue;
-      if (this.toolbarComponent.mode === 'display') {
-        if (this.selectedFilterKey) {
-          this.toolbarComponent.enableEditMode();
-        } else {
-          this.toolbarComponent.enableAddMode();
-        }
-      }
-    });
   }
 
   loadFilters(): void {
@@ -83,7 +87,7 @@ export class AppComponent implements OnInit {
     } else {
       this.selectedFilterKey = null;
       this.editingQueryValue = null;
-      this.queryValueControl.setValue('', { emitEvent: false });
+      this.queryValueControl.setValue(null, { emitEvent: false });
       this.queryValueControl.markAsTouched();
     }
     this.isPopupVisible = true;
@@ -97,8 +101,25 @@ export class AppComponent implements OnInit {
       this.queryValueControl.markAsUntouched();
     } else {
       this.editingQueryValue = null;
-      this.queryValueControl.setValue('', { emitEvent: false });
+      this.queryValueControl.setValue(null, { emitEvent: false });
       this.queryValueControl.markAsTouched();
+    }
+  }
+
+  onQueryValueChange(newValue: any): void {
+    const originalValue = this.selectedFilterKey ? (this.filtersData[this.selectedFilterKey] || null) : null;
+    const isActuallyChanged = JSON.stringify(newValue) !== JSON.stringify(originalValue);
+
+    this.editingQueryValue = newValue;
+    this.queryValueControl.setValue(newValue, { emitEvent: false });
+    this.queryValueControl.markAsTouched();
+
+    if (isActuallyChanged && this.toolbarComponent.mode === 'display') {
+      if (this.selectedFilterKey) {
+        this.toolbarComponent.enableEditMode();
+      } else {
+        this.toolbarComponent.enableAddMode();
+      }
     }
   }
 
@@ -145,7 +166,7 @@ export class AppComponent implements OnInit {
       this.queryValueControl.markAsUntouched();
     } else {
       this.editingQueryValue = null;
-      this.queryValueControl.setValue('', { emitEvent: false });
+      this.queryValueControl.setValue(null, { emitEvent: false });
       this.queryValueControl.markAsUntouched();
     }
   }
@@ -168,7 +189,7 @@ export class AppComponent implements OnInit {
             // Set selection to null as requested
             this.selectedFilterKey = null;
             this.editingQueryValue = null;
-            this.queryValueControl.setValue('', { emitEvent: false });
+            this.queryValueControl.setValue(null, { emitEvent: false });
             this.queryValueControl.markAsUntouched();
           },
           error: (err) => {

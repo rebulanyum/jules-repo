@@ -208,3 +208,15 @@ code {
   margin: 0;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.invalid-filter-builder {
+  border: 1px solid #f44336;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+.query-error-message {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 8px;
+}

@@ -28,7 +28,7 @@ import { confirm } from 'devextreme/ui/dialog';
 export class FilterBuilderToolbarComponent implements OnChanges {
   @Input() filters: Record<string, string> = {};
   @Input() selectedKey: string | null = null;
-  @Input() queryValue: string | null = null;
+  @Input() queryValue: any = null;
 
   @Output() selectedKeyChange = new EventEmitter<string | null>();
   @Output() saveRename = new EventEmitter<{ oldKey: string; newKey: string }>();
@@ -42,7 +42,17 @@ export class FilterBuilderToolbarComponent implements OnChanges {
   filterNameControl = new FormControl<string | null>(null);
 
   get isQueryValueValid(): boolean {
-    return this.queryValue !== null && this.queryValue !== undefined && this.queryValue.trim().length > 0;
+    const val = this.queryValue;
+    if (val === null || val === undefined) {
+      return false;
+    }
+    if (Array.isArray(val)) {
+      return val.length > 0;
+    }
+    if (typeof val === 'string') {
+      return val.trim().length > 0;
+    }
+    return true;
   }
 
   get filterKeys(): string[] {
@@ -170,8 +180,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       ? (this.copiedValue !== null ? this.copiedValue : null)
       : (this.selectedKey ? (this.filters[this.selectedKey] || null) : null);
 
-    const valueChanged = (this.queryValue !== originalValue) &&
-                         ((this.queryValue || '').trim() !== (originalValue || '').trim());
+    const valueChanged = JSON.stringify(this.queryValue) !== JSON.stringify(originalValue);
 
     if (nameChanged || valueChanged) {
       confirm('Are you sure you want to discard your changes?', 'Discard Changes').then((confirmed: boolean) => {

@@ -14,10 +14,10 @@ export class WasabiService {
   // Using 'any' as requested because this is a generic service.
   private state$ = new BehaviorSubject<any>({
     AdvancedFilters: {
-      'Active Users Only': 'status = "active"',
-      'Enterprise Customers': 'plan = "enterprise"',
-      'Pending Reviews': 'status = "pending" AND type = "review"',
-      'High Value Leads': 'score > 80'
+      'Active Users Only': ['status', '=', 'active'],
+      'Enterprise Customers': ['plan', '=', 'enterprise'],
+      'Pending Reviews': [['status', '=', 'pending'], 'and', ['type', '=', 'review']],
+      'High Value Leads': ['score', '>', 80]
     }
   });
 

@@ -55,18 +55,20 @@
             </div>
           }
 
-          <div class="detail-row">
-            <mat-form-field class="query-form-field" style="width: 100%;">
-              <mat-label>Associated Query Value</mat-label>
-              <input matInput
-                     [formControl]="queryValueControl"
-                     placeholder="e.g. status = 'active'" />
-              @if (queryValueControl.hasError('required')) {
-                <mat-error>
-                  Query value is required
-                </mat-error>
-              }
-            </mat-form-field>
+          <div class="detail-row" style="margin-top: 15px;">
+            <span class="detail-label" style="display: block; margin-bottom: 8px;">Associated Query Value:</span>
+            <div [class.invalid-filter-builder]="queryValueControl.invalid && queryValueControl.touched">
+              <dx-filter-builder
+                [fields]="fields"
+                [value]="queryValueControl.value"
+                (valueChange)="onQueryValueChange($event)">
+              </dx-filter-builder>
+            </div>
+            @if (queryValueControl.invalid && queryValueControl.touched) {
+              <div class="query-error-message">
+                Query value is required
+              </div>
+            }
           </div>
         </div>
 
