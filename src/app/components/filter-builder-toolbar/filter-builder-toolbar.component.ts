@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DxSelectBoxModule } from 'devextreme-angular';
 import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
@@ -15,7 +15,7 @@ import { confirm } from 'devextreme/ui/dialog';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatSelectModule,
+    DxSelectBoxModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
@@ -41,12 +41,11 @@ export class FilterBuilderToolbarComponent implements OnChanges {
 
   filterNameControl = new FormControl<string | null>(null);
 
-  get filterKeys(): string[] {
-    return Object.keys(this.filters || {});
-  }
+  filterKeys: string[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['filters']) {
+      this.filterKeys = Object.keys(this.filters || {});
       this.checkEmptyFilters();
     }
     // Update validation rules whenever filters or selectedKey changes

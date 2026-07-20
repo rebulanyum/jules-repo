@@ -1,17 +1,14 @@
 <div class="toolbar-container">
-  <!-- Display Mode: mat-select -->
+  <!-- Display Mode: dx-select-box -->
   @if (mode === 'display') {
     <div class="control-section">
-      <mat-form-field class="toolbar-form-field">
-        <mat-label>Select Filter</mat-label>
-        <mat-select [value]="selectedKey" (selectionChange)="onSelectionChange($event.value)">
-          @for (key of filterKeys; track key) {
-            <mat-option [value]="key">
-              {{ key }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <dx-select-box
+        class="toolbar-select-box"
+        [items]="filterKeys"
+        [value]="selectedKey"
+        placeholder="Select Filter"
+        (onValueChanged)="onSelectionChange($event.value)">
+      </dx-select-box>
     </div>
   }
 
