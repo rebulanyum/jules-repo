@@ -41,20 +41,6 @@ export class FilterBuilderToolbarComponent implements OnChanges {
 
   filterNameControl = new FormControl<string | null>(null);
 
-  get isQueryValueValid(): boolean {
-    const val = this.queryValue;
-    if (val === null || val === undefined) {
-      return false;
-    }
-    if (Array.isArray(val)) {
-      return val.length > 0;
-    }
-    if (typeof val === 'string') {
-      return val.trim().length > 0;
-    }
-    return true;
-  }
-
   get filterKeys(): string[] {
     return Object.keys(this.filters || {});
   }
@@ -146,7 +132,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
   }
 
   saveEdit(): void {
-    if (this.filterNameControl.invalid || !this.isQueryValueValid) {
+    if (this.filterNameControl.invalid) {
       return;
     }
 

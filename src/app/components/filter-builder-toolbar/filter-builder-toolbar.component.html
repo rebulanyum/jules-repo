@@ -64,7 +64,7 @@
     <!-- Save Button -->
     <button mat-icon-button color="accent"
             matTooltip="Save Changes"
-            [disabled]="mode === 'display' || filterNameControl.invalid || !isQueryValueValid"
+            [disabled]="mode === 'display' || filterNameControl.invalid"
             (click)="saveEdit()">
       <mat-icon>save</mat-icon>
     </button>

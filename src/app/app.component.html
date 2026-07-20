@@ -31,7 +31,7 @@
         #toolbar
         [filters]="filtersData"
         [selectedKey]="selectedFilterKey"
-        [queryValue]="editingQueryValue"
+        [queryValue]="filterValue"
         (selectedKeyChange)="onSelectedKeyChange($event)"
         (saveRename)="handleRename($event)"
         (deleteFilter)="handleDelete($event)"
@@ -57,18 +57,13 @@
 
           <div class="detail-row" style="margin-top: 15px;">
             <span class="detail-label" style="display: block; margin-bottom: 8px;">Associated Query Value:</span>
-            <div [class.invalid-filter-builder]="queryValueControl.invalid && queryValueControl.touched">
+            <div>
               <dx-filter-builder
                 [fields]="fields"
-                [value]="queryValueControl.value"
+                [value]="filterValue"
                 (valueChange)="onQueryValueChange($event)">
               </dx-filter-builder>
             </div>
-            @if (queryValueControl.invalid && queryValueControl.touched) {
-              <div class="query-error-message">
-                Query value is required
-              </div>
-            }
           </div>
         </div>
 

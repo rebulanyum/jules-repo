@@ -12,92 +12,12 @@ case.
 Initial chunk files | Names         |  Raw size
 styles.css          | styles        | 764.45 kB |
 polyfills.js        | polyfills     |  88.09 kB |
-main.js             | main          |  35.88 kB |
+main.js             | main          |  34.44 kB |
 
-                    | Initial total | 888.42 kB
+                    | Initial total | 886.97 kB
 
-Application bundle generation complete. [9.040 seconds]
+Application bundle generation complete. [8.772 seconds]
 
 Watch mode enabled. Watching for file changes...
   ➜  Local:   http://localhost:4200/
   ➜  Network: http://192.168.0.2:4200/
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 35.69 kB |
-
-Application bundle generation complete. [3.982 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 35.62 kB |
-
-Application bundle generation complete. [0.526 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 35.66 kB |
-
-Application bundle generation complete. [2.904 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 36.46 kB |
-
-Application bundle generation complete. [1.304 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 36.61 kB |
-
-Application bundle generation complete. [1.429 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 36.92 kB |
-
-Application bundle generation complete. [0.539 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 37.13 kB |
-
-Application bundle generation complete. [0.794 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 37.31 kB |
-
-Application bundle generation complete. [0.513 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 37.27 kB |
-
-Application bundle generation complete. [0.365 seconds]
-
-Page reload sent to client(s).
-- Changes detected. Rebuilding...
-
-Initial chunk files | Names | Raw size
-main.js             | main  | 37.10 kB |
-
-Application bundle generation complete. [0.560 seconds]
-
-Page reload sent to client(s).
