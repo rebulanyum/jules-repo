@@ -16,6 +16,7 @@
   @if (mode === 'edit') {
     <div class="control-section">
       <dx-select-box
+        #editSelectBox
         class="toolbar-select-box"
         [items]="filterKeys"
         [value]="selectedKey"
@@ -23,7 +24,8 @@
         [acceptCustomValue]="true"
         customItemCreateEvent="focusout"
         (onCustomItemCreating)="onCustomItemCreating($event)"
-        (onValueChanged)="onSelectionChange($event.value)">
+        (onValueChanged)="onSelectionChange($event.value)"
+        (onInput)="onInput($event)">
       </dx-select-box>
       @if (isInvalid && errorMessage) {
         <div class="validation-error-message">
