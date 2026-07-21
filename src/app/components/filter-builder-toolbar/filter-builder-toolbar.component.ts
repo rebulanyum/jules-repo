@@ -95,7 +95,9 @@ export class FilterBuilderToolbarComponent implements OnChanges {
     }
   }
 
-  onSelectionChange(value: string | null): void {
+  onSelectionChange(e: any): void {
+    const value = e?.value;
+    console.log('onSelectionChange called with value:', value, 'event type:', e?.event?.type, 'event:', !!e?.event, 'mode:', this.mode);
     if (this.mode === 'display') {
       this.selectedKey = value;
       this.selectedKeyChange.emit(value);
@@ -103,7 +105,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
     }
 
     // In edit mode: check if selecting another existing key from list
-    const isSelectingAnotherKey = value !== null && this.filterKeys.includes(value) && (this.isAddAction || value !== this.originalSelectedKey);
+    const isSelectingAnotherKey = value !== null && e.event !== undefined && this.filterKeys.includes(value) && (this.isAddAction || value !== this.originalSelectedKey);
 
     if (isSelectingAnotherKey) {
       // Simulate "Cancel" behavior
@@ -111,8 +113,9 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       const previousKey = this.selectedKey;
 
       setTimeout(() => {
+        const defaultAddName = this.originalSelectedKey ? (this.originalSelectedKey + ' Copy') : '<default>';
         const nameChanged = this.isAddAction
-          ? (currentInputText !== '<default>' && currentInputText !== 'Default' && currentInputText !== '')
+          ? (currentInputText !== defaultAddName && currentInputText !== 'Default' && currentInputText !== '')
           : (currentInputText !== this.originalSelectedKey);
 
         const originalValue = this.isAddAction
@@ -190,7 +193,7 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       this.isAddAction = true;
       this.mode = 'edit';
       this.copiedValue = this.filters[this.selectedKey] || null;
-      this.originalSelectedKey = null;
+      this.originalSelectedKey = this.selectedKey;
 
       const newKeyName = this.selectedKey + ' Copy';
       this.selectedKey = newKeyName;
@@ -235,8 +238,9 @@ export class FilterBuilderToolbarComponent implements OnChanges {
 
   onCancelClick(): void {
     // Check if key name has changed
+    const defaultAddName = this.originalSelectedKey ? (this.originalSelectedKey + ' Copy') : '<default>';
     const nameChanged = this.isAddAction
-      ? (this.selectedKey !== '<default>' && this.selectedKey !== 'Default')
+      ? (this.selectedKey !== defaultAddName && this.selectedKey !== 'Default')
       : (this.selectedKey !== this.originalSelectedKey);
 
     // Check if query value has changed

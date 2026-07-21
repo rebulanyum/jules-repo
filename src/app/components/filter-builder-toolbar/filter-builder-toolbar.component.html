@@ -7,7 +7,7 @@
         [items]="filterKeys"
         [value]="selectedKey"
         placeholder="Select Filter"
-        (onValueChanged)="onSelectionChange($event.value)">
+        (onValueChanged)="onSelectionChange($event)">
       </dx-select-box>
     </div>
   }
@@ -24,7 +24,7 @@
         [acceptCustomValue]="true"
         customItemCreateEvent="focusout"
         (onCustomItemCreating)="onCustomItemCreating($event)"
-        (onValueChanged)="onSelectionChange($event.value)"
+        (onValueChanged)="onSelectionChange($event)"
         (onInput)="onInput($event)">
       </dx-select-box>
       @if (isInvalid && errorMessage) {
