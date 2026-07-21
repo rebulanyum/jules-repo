@@ -25,6 +25,12 @@
   width: 100%;
 }
 
+.validation-error-message {
+  color: #f44336;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 .buttons-section {
   display: flex;
   flex-flow: row wrap;
