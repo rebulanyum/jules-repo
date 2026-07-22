@@ -1,37 +1,37 @@
 <div class="toolbar-container">
-  <!-- Display Mode: mat-select -->
+  <!-- Display Mode: dx-select-box -->
   @if (mode === 'display') {
     <div class="control-section">
-      <mat-form-field class="toolbar-form-field">
-        <mat-label>Select Filter</mat-label>
-        <mat-select [value]="selectedKey" (selectionChange)="onSelectionChange($event.value)">
-          @for (key of filterKeys; track key) {
-            <mat-option [value]="key">
-              {{ key }}
-            </mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
+      <dx-select-box
+        class="toolbar-select-box"
+        [items]="filterKeys"
+        [value]="selectedKey"
+        placeholder="Select Filter"
+        (onValueChanged)="onSelectionChange($event)">
+      </dx-select-box>
     </div>
   }
 
-  <!-- Edit Mode: Text Input -->
+  <!-- Edit Mode: dx-select-box with acceptCustomValue -->
   @if (mode === 'edit') {
     <div class="control-section">
-      <mat-form-field class="toolbar-form-field">
-        <mat-label>Filter Name</mat-label>
-        <input matInput [formControl]="filterNameControl" placeholder="Enter new name" (keyup.enter)="saveEdit()" />
-        @if (filterNameControl.hasError('duplicate')) {
-          <mat-error>
-            Name must be unique (case-insensitive)
-          </mat-error>
-        }
-        @if (filterNameControl.hasError('required')) {
-          <mat-error>
-            Filter name is required
-          </mat-error>
-        }
-      </mat-form-field>
+      <dx-select-box
+        #editSelectBox
+        class="toolbar-select-box"
+        [items]="filterKeys"
+        [value]="selectedKey"
+        placeholder="Filter Name"
+        [acceptCustomValue]="true"
+        customItemCreateEvent="focusout"
+        (onCustomItemCreating)="onCustomItemCreating($event)"
+        (onValueChanged)="onSelectionChange($event)"
+        (onInput)="onInput($event)">
+      </dx-select-box>
+      @if (isInvalid && errorMessage) {
+        <div class="validation-error-message">
+          {{ errorMessage }}
+        </div>
+      }
     </div>
   }
 
@@ -64,7 +64,7 @@
     <!-- Save Button -->
     <button mat-icon-button color="accent"
             matTooltip="Save Changes"
-            [disabled]="mode === 'display' || filterNameControl.invalid"
+            [disabled]="mode === 'display' || isInvalid"
             (click)="saveEdit()">
       <mat-icon>save</mat-icon>
     </button>

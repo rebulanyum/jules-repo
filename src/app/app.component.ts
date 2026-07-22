@@ -98,7 +98,7 @@ export class AppComponent implements OnInit {
 
     // Clone the filters dictionary to trigger Angular change detection
     const updatedFilters = { ...this.filtersData };
-    const queryValueToSave = this.filterValue || 'status = "all"';
+    const queryValueToSave = this.filterValue || [];
 
     if (!oldKey) {
       // Adding a brand new filter

@@ -1,0 +1,33 @@
+
+> angular-app@0.0.0 start
+> ng serve
+
+- Building...
+
+Initial chunk files | Names         |  Raw size
+styles.css          | styles        | 764.45 kB |
+polyfills.js        | polyfills     |  88.09 kB |
+main.js             | main          |  36.83 kB |
+
+                    | Initial total | 889.36 kB
+
+Application bundle generation complete. [11.361 seconds]
+
+Watch mode enabled. Watching for file changes...
+  ➜  Local:   http://localhost:4200/
+- Changes detected. Rebuilding...
+
+Initial chunk files | Names | Raw size
+main.js             | main  | 36.85 kB |
+
+Application bundle generation complete. [0.757 seconds]
+
+Page reload sent to client(s).
+- Changes detected. Rebuilding...
+
+Initial chunk files | Names | Raw size
+main.js             | main  | 37.09 kB |
+
+Application bundle generation complete. [2.175 seconds]
+
+Page reload sent to client(s).

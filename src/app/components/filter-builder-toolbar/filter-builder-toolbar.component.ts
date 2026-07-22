@@ -1,12 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormControl, Validators, ValidatorFn, AbstractControl } from '@angular/forms';
-import { MatSelectModule } from '@angular/material/select';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { DxSelectBoxModule } from 'devextreme-angular';
 import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
@@ -14,10 +11,7 @@ import { confirm } from 'devextreme/ui/dialog';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
-    MatSelectModule,
-    MatInputModule,
-    MatFormFieldModule,
+    DxSelectBoxModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule
@@ -35,22 +29,30 @@ export class FilterBuilderToolbarComponent implements OnChanges {
   @Output() deleteFilter = new EventEmitter<string>();
   @Output() editCanceled = new EventEmitter<void>();
 
+  @ViewChild('editSelectBox', { static: false }) editSelectBox!: any;
+
   mode: 'display' | 'edit' = 'display';
   isAddAction: boolean = false;
   copiedValue: string | null = null;
+  originalSelectedKey: string | null = null;
 
-  filterNameControl = new FormControl<string | null>(null);
+  isInvalid = false;
+  errorMessage: string | null = null;
 
-  get filterKeys(): string[] {
-    return Object.keys(this.filters || {});
-  }
+  filterKeys: string[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['filters']) {
+      this.filterKeys = Object.keys(this.filters || {});
       this.checkEmptyFilters();
     }
-    // Update validation rules whenever filters or selectedKey changes
-    this.updateValidation();
+    if (changes['selectedKey']) {
+      if (this.mode === 'edit' && this.isAddAction && !this.originalSelectedKey) {
+        if (changes['selectedKey'].currentValue === null) {
+          this.selectedKey = '<default>';
+        }
+      }
+    }
   }
 
   private checkEmptyFilters(): void {
@@ -58,52 +60,138 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       this.mode = 'edit';
       this.isAddAction = true;
       this.copiedValue = null;
-      this.filterNameControl.setValue('Default');
-      this.filterNameControl.markAsTouched();
+      this.originalSelectedKey = null;
+      this.selectedKey = 'Default';
+      this.isInvalid = false;
+      this.errorMessage = null;
     }
   }
 
-  private updateValidation(): void {
-    this.filterNameControl.setValidators([
-      Validators.required,
-      this.uniqueFilterNameValidator()
-    ]);
-    this.filterNameControl.updateValueAndValidity();
-  }
+  validateName(name: string): boolean {
+    const trimmed = (name || '').trim();
+    if (!trimmed) {
+      this.isInvalid = true;
+      this.errorMessage = 'Filter name is required';
+      return false;
+    }
 
-  uniqueFilterNameValidator(): ValidatorFn {
-    return (control: AbstractControl) => {
-      const value = (control.value || '').trim().toLowerCase();
-      if (!value) {
-        return null;
+    const isAdding = this.isAddAction || !this.originalSelectedKey;
+    const duplicateExists = this.filterKeys.some(key => {
+      if (!isAdding && key.toLowerCase() === this.originalSelectedKey?.toLowerCase()) {
+        return false;
       }
+      return key.toLowerCase() === trimmed.toLowerCase();
+    });
 
-      const isAdding = this.isAddAction || !this.selectedKey;
-      const keys = Object.keys(this.filters || {});
+    if (duplicateExists) {
+      this.isInvalid = true;
+      this.errorMessage = 'Name must be unique (case-insensitive)';
+      return false;
+    }
 
-      const duplicateExists = keys.some(key => {
-        if (!isAdding && key.toLowerCase() === this.selectedKey?.toLowerCase()) {
-          return false;
-        }
-        return key.toLowerCase() === value;
-      });
-
-      return duplicateExists ? { duplicate: true } : null;
-    };
+    this.isInvalid = false;
+    this.errorMessage = null;
+    return true;
   }
 
-  onSelectionChange(value: string | null): void {
-    this.selectedKey = value;
-    this.selectedKeyChange.emit(value);
+  onInput(e: any): void {
+    const text = e.event?.target?.value;
+    if (text !== undefined) {
+      this.selectedKey = text;
+      this.validateName(text);
+    }
+  }
+
+  onSelectionChange(e: any): void {
+    const value = e?.value;
+    console.log('onSelectionChange called with value:', value, 'event type:', e?.event?.type, 'event:', !!e?.event, 'mode:', this.mode);
+    if (this.mode === 'display') {
+      this.selectedKey = value;
+      this.selectedKeyChange.emit(value);
+      return;
+    }
+
+    // In edit mode: check if selecting another existing key from list
+    const isSelectingAnotherKey = value !== null && e.event !== undefined && this.filterKeys.includes(value) && (this.isAddAction || value !== this.originalSelectedKey);
+
+    if (isSelectingAnotherKey) {
+      // Simulate "Cancel" behavior
+      const currentInputText = this.selectedKey;
+      const previousKey = this.selectedKey;
+
+      setTimeout(() => {
+        const defaultAddName = this.originalSelectedKey ? (this.originalSelectedKey + ' Copy') : '<default>';
+        const nameChanged = this.isAddAction
+          ? (currentInputText !== defaultAddName && currentInputText !== 'Default' && currentInputText !== '')
+          : (currentInputText !== this.originalSelectedKey);
+
+        const originalValue = this.isAddAction
+          ? (this.copiedValue !== null ? this.copiedValue : null)
+          : (this.originalSelectedKey ? (this.filters[this.originalSelectedKey] || null) : null);
+
+        const valueChanged = JSON.stringify(this.queryValue) !== JSON.stringify(originalValue);
+
+        if (nameChanged || valueChanged) {
+          confirm('Are you sure you want to discard your changes?', 'Discard Changes').then((confirmed: boolean) => {
+            if (confirmed) {
+              this.revertStateAndSelect(value);
+            } else {
+              this.selectedKey = currentInputText || previousKey;
+              console.log('REVERT DISCARD - selectedKey to restore:', this.selectedKey);
+              setTimeout(() => {
+                const instance = this.editSelectBox?.instance;
+                console.log('REVERT DISCARD - instance found:', !!instance);
+                if (instance) {
+                  instance.option('value', this.selectedKey);
+                  instance.option('text', this.selectedKey);
+                  const inputElement = instance.element().querySelector('.dx-texteditor-input') as HTMLInputElement;
+                  console.log('REVERT DISCARD - inputElement found:', !!inputElement, 'old val:', inputElement?.value);
+                  if (inputElement) {
+                    inputElement.value = this.selectedKey || '';
+                    console.log('REVERT DISCARD - inputElement new val:', inputElement.value);
+                  }
+                }
+              }, 0);
+            }
+          });
+        } else {
+          this.revertStateAndSelect(value);
+        }
+      }, 0);
+    } else {
+      this.selectedKey = value;
+      this.validateName(value || '');
+    }
+  }
+
+  private revertStateAndSelect(newKey: string): void {
+    this.isAddAction = false;
+    this.copiedValue = null;
+    this.isInvalid = false;
+    this.errorMessage = null;
+    this.mode = 'display';
+    this.selectedKey = newKey;
+    this.selectedKeyChange.emit(newKey);
+  }
+
+  onCustomItemCreating(e: any): void {
+    const trimmed = (e.text || '').trim();
+    if (this.validateName(trimmed)) {
+      e.customItem = trimmed;
+      this.selectedKey = trimmed;
+    } else {
+      e.customItem = null;
+    }
   }
 
   enableAddMode(): void {
     this.isAddAction = true;
     this.copiedValue = null;
+    this.originalSelectedKey = null;
+    this.selectedKey = '<default>';
+    this.isInvalid = false;
+    this.errorMessage = null;
     this.mode = 'edit';
-    this.filterNameControl.setValue('<default>');
-    this.filterNameControl.markAsTouched();
-    this.updateValidation();
     this.selectedKeyChange.emit(null);
   }
 
@@ -112,11 +200,12 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       this.isAddAction = true;
       this.mode = 'edit';
       this.copiedValue = this.filters[this.selectedKey] || null;
+      this.originalSelectedKey = this.selectedKey;
 
       const newKeyName = this.selectedKey + ' Copy';
-      this.filterNameControl.setValue(newKeyName);
-      this.filterNameControl.markAsTouched();
-      this.updateValidation();
+      this.selectedKey = newKeyName;
+      this.isInvalid = false;
+      this.errorMessage = null;
     }
   }
 
@@ -124,25 +213,24 @@ export class FilterBuilderToolbarComponent implements OnChanges {
     if (this.selectedKey) {
       this.isAddAction = false;
       this.copiedValue = null;
+      this.originalSelectedKey = this.selectedKey;
+      this.isInvalid = false;
+      this.errorMessage = null;
       this.mode = 'edit';
-      this.filterNameControl.setValue(this.selectedKey);
-      this.filterNameControl.markAsTouched();
-      this.updateValidation();
     }
   }
 
   saveEdit(): void {
-    if (this.filterNameControl.invalid) {
+    if (this.isInvalid) {
       return;
     }
 
-    const value = this.filterNameControl.value;
-    const trimmed = (value || '').trim();
-    if (!trimmed) {
+    const trimmed = (this.selectedKey || '').trim();
+    if (!this.validateName(trimmed)) {
       return;
     }
 
-    const oldKey = this.isAddAction ? '' : (this.selectedKey || '');
+    const oldKey = this.isAddAction ? '' : (this.originalSelectedKey || '');
 
     this.saveRename.emit({
       oldKey: oldKey,
@@ -151,20 +239,21 @@ export class FilterBuilderToolbarComponent implements OnChanges {
 
     this.isAddAction = false;
     this.copiedValue = null;
-    this.filterNameControl.setValue(null);
+    this.originalSelectedKey = null;
     this.mode = 'display';
   }
 
   onCancelClick(): void {
     // Check if key name has changed
+    const defaultAddName = this.originalSelectedKey ? (this.originalSelectedKey + ' Copy') : '<default>';
     const nameChanged = this.isAddAction
-      ? (this.filterNameControl.value !== '<default>' && this.filterNameControl.value !== 'Default')
-      : (this.filterNameControl.value !== this.selectedKey);
+      ? (this.selectedKey !== defaultAddName && this.selectedKey !== 'Default')
+      : (this.selectedKey !== this.originalSelectedKey);
 
     // Check if query value has changed
     const originalValue = this.isAddAction
       ? (this.copiedValue !== null ? this.copiedValue : null)
-      : (this.selectedKey ? (this.filters[this.selectedKey] || null) : null);
+      : (this.originalSelectedKey ? (this.filters[this.originalSelectedKey] || null) : null);
 
     const valueChanged = JSON.stringify(this.queryValue) !== JSON.stringify(originalValue);
 
@@ -182,10 +271,12 @@ export class FilterBuilderToolbarComponent implements OnChanges {
   private revertState(): void {
     this.isAddAction = false;
     this.copiedValue = null;
+    this.isInvalid = false;
+    this.errorMessage = null;
     if (this.filterKeys.length === 0) {
-      this.filterNameControl.setValue('Default');
+      this.selectedKey = 'Default';
     } else {
-      this.filterNameControl.setValue(null);
+      this.selectedKey = this.originalSelectedKey;
       this.mode = 'display';
     }
     this.editCanceled.emit();
