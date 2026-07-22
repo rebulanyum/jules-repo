@@ -46,6 +46,13 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       this.filterKeys = Object.keys(this.filters || {});
       this.checkEmptyFilters();
     }
+    if (changes['selectedKey']) {
+      if (this.mode === 'edit' && this.isAddAction && !this.originalSelectedKey) {
+        if (changes['selectedKey'].currentValue === null) {
+          this.selectedKey = '<default>';
+        }
+      }
+    }
   }
 
   private checkEmptyFilters(): void {
