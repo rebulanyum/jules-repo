@@ -166,7 +166,14 @@ export class FilterBuilderToolbarComponent implements OnChanges {
       ? (this.copiedValue !== null ? this.copiedValue : null)
       : (this.selectedKey ? (this.filters[this.selectedKey] || null) : null);
 
-    const valueChanged = JSON.stringify(this.queryValue) !== JSON.stringify(originalValue);
+    const normalize = (val: any): string => {
+      if (val === null || val === undefined || (Array.isArray(val) && val.length === 0)) {
+        return '[]';
+      }
+      return JSON.stringify(val);
+    };
+
+    const valueChanged = normalize(this.queryValue) !== normalize(originalValue);
 
     if (nameChanged || valueChanged) {
       confirm('Are you sure you want to discard your changes?', 'Discard Changes').then((confirmed: boolean) => {

@@ -27,7 +27,7 @@ import { confirm } from 'devextreme/ui/dialog';
 export class AdvancedFiltersDialogComponent implements OnInit {
   filtersData: Record<string, any> = {};
   selectedFilterKey: string | null = null;
-  filterValue: any = null;
+  filterValue: any = [];
 
   fields: any[] = [
     { dataField: 'status', dataType: 'string', caption: 'Status' },
@@ -66,17 +66,17 @@ export class AdvancedFiltersDialogComponent implements OnInit {
   onSelectedKeyChange(newKey: string | null): void {
     this.selectedFilterKey = newKey;
     if (newKey) {
-      this.filterValue = this.filtersData[newKey] || null;
+      this.filterValue = this.filtersData[newKey] || [];
     } else {
-      this.filterValue = null;
+      this.filterValue = [];
     }
   }
 
   onQueryValueChange(newValue: any): void {
-    const originalValue = this.selectedFilterKey ? (this.filtersData[this.selectedFilterKey] || null) : null;
+    const originalValue = this.selectedFilterKey ? (this.filtersData[this.selectedFilterKey] || []) : [];
     const isActuallyChanged = JSON.stringify(newValue) !== JSON.stringify(originalValue);
 
-    this.filterValue = newValue;
+    this.filterValue = newValue || [];
 
     if (isActuallyChanged && this.toolbarComponent.mode === 'display') {
       if (this.selectedFilterKey) {
@@ -94,7 +94,7 @@ export class AdvancedFiltersDialogComponent implements OnInit {
     }
 
     const updatedFilters = { ...this.filtersData };
-    const queryValueToSave = this.filterValue || 'status = "all"';
+    const queryValueToSave = (this.filterValue && this.filterValue !== 'status = "all"') ? this.filterValue : [];
 
     if (!oldKey) {
       updatedFilters[newKey] = queryValueToSave;
@@ -109,7 +109,7 @@ export class AdvancedFiltersDialogComponent implements OnInit {
       next: (response: FirmGridSetting) => {
         this.filtersData = response.AdvancedFilters || {};
         this.selectedFilterKey = newKey;
-        this.filterValue = this.filtersData[newKey] || null;
+        this.filterValue = this.filtersData[newKey] || [];
       },
       error: (err) => {
         console.error('Failed to update filter name', err);
@@ -119,9 +119,9 @@ export class AdvancedFiltersDialogComponent implements OnInit {
 
   handleCancel(): void {
     if (this.selectedFilterKey) {
-      this.filterValue = this.filtersData[this.selectedFilterKey] || null;
+      this.filterValue = this.filtersData[this.selectedFilterKey] || [];
     } else {
-      this.filterValue = null;
+      this.filterValue = [];
     }
   }
 
@@ -139,7 +139,7 @@ export class AdvancedFiltersDialogComponent implements OnInit {
           next: (response: FirmGridSetting) => {
             this.filtersData = response.AdvancedFilters || {};
             this.selectedFilterKey = null;
-            this.filterValue = null;
+            this.filterValue = [];
           },
           error: (err) => {
             console.error('Failed to delete filter', err);
