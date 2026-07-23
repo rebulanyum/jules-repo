@@ -1,0 +1,59 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span>Advanced Filters Manager</span>
+  <button mat-icon-button (click)="closeDialog()" aria-label="Close dialog">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <!-- Custom Toolbar Component -->
+  <filter-builder-toolbar
+    #toolbar
+    [filters]="filtersData"
+    [selectedKey]="selectedFilterKey"
+    [queryValue]="filterValue"
+    (selectedKeyChange)="onSelectedKeyChange($event)"
+    (saveRename)="handleRename($event)"
+    (deleteFilter)="handleDelete($event)"
+    (editCanceled)="handleCancel()">
+  </filter-builder-toolbar>
+
+  <!-- Remaining Popup Content Area -->
+  <div class="popup-body">
+    <div class="content-card">
+      <h3>Filter Value Builder</h3>
+
+      @if (selectedFilterKey) {
+        <div class="detail-row" style="margin-bottom: 12px;">
+          <span class="detail-label">Filter Name/Key:</span>
+          <span class="detail-value font-highlight">{{ selectedFilterKey }}</span>
+        </div>
+      } @else {
+        <div class="detail-row" style="margin-bottom: 12px;">
+          <span class="detail-label">Filter Name/Key:</span>
+          <span class="detail-value font-highlight" style="color: #888; font-style: italic;">No Filter Selected (Editing will Add)</span>
+        </div>
+      }
+
+      <div class="detail-row" style="margin-top: 15px;">
+        <span class="detail-label" style="display: block; margin-bottom: 8px;">Associated Query Value:</span>
+        <div>
+          <dx-filter-builder
+            [fields]="fields"
+            [value]="filterValue"
+            (valueChange)="onQueryValueChange($event)">
+          </dx-filter-builder>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Server State Mock DB Sync visualizer -->
+    <div class="live-sync-section">
+      <div class="sync-header">
+        <span class="dot pulse-animation"></span>
+        <h4>Live Mock Database State (via WasabiService):</h4>
+      </div>
+      <pre class="json-display">{{ filtersData | json }}</pre>
+    </div>
+  </div>
+</mat-dialog-content>
