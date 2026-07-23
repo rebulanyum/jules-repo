@@ -15,3 +15,8 @@ html, body {
 .cdk-overlay-container {
   z-index: 20000 !important;
 }
+
+/* Ensure DevExtreme overlays (like filter builder field/operator dropdowns, select boxes, calendars, etc.) appear above Angular Material dialogs/overlays */
+.dx-overlay-wrapper {
+  z-index: 30000 !important;
+}
