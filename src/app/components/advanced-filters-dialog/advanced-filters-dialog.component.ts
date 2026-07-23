@@ -76,7 +76,9 @@ export class AdvancedFiltersDialogComponent implements OnInit {
     const originalValue = this.selectedFilterKey ? (this.filtersData[this.selectedFilterKey] || []) : [];
     const isActuallyChanged = JSON.stringify(newValue) !== JSON.stringify(originalValue);
 
-    this.filterValue = newValue || [];
+    if (JSON.stringify(this.filterValue) !== JSON.stringify(newValue)) {
+      this.filterValue = newValue || [];
+    }
 
     if (isActuallyChanged && this.toolbarComponent.mode === 'display') {
       if (this.selectedFilterKey) {
