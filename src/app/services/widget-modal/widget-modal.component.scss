@@ -1,0 +1,29 @@
+.widget-modal {
+    border: solid 1px transparent;
+    padding: 15px;
+    min-width: 300px;
+
+    div{
+        padding-top: 15px;
+    }
+}
+
+.content{
+    max-height: 75vh !important;
+    max-width: 75vw !important;
+    overflow-y: auto;
+    white-space: pre-line;
+}
+
+.footer{
+    width: 100%;
+    text-align: right;
+
+    & > button {
+        margin-left: 10px;
+    }
+}
+
+.mat-button, .mat-flat-button{
+    margin-left: 5px;
+}

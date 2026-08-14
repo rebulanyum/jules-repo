@@ -7,7 +7,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { DxFilterBuilderModule } from 'devextreme-angular';
 import { FilterBuilderToolbarComponent } from '../filter-builder-toolbar/filter-builder-toolbar.component';
 import { WasabiService, FirmGridSetting } from '../../services/wasabi.service';
-import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
   selector: 'advanced-filters-dialog',
@@ -63,7 +62,7 @@ export class AdvancedFiltersDialogComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  onSelectedKeyChange(newKey: string | null): void {
+  handleSelectedKeyChange(newKey: string | null): void {
     this.selectedFilterKey = newKey;
     if (newKey) {
       this.filterValue = this.filtersData[newKey] || [];
@@ -80,7 +79,7 @@ export class AdvancedFiltersDialogComponent implements OnInit {
       this.filterValue = newValue || [];
     }
 
-    if (isActuallyChanged && this.toolbarComponent.mode === 'display') {
+    if (isActuallyChanged && this.toolbarComponent['mode'] === 'display') {
       if (this.selectedFilterKey) {
         this.toolbarComponent.enableEditMode();
       } else {
@@ -89,27 +88,25 @@ export class AdvancedFiltersDialogComponent implements OnInit {
     }
   }
 
-  handleRename(event: { oldKey: string; newKey: string }): void {
+  handleSaveRename(event: { oldKey: string; newKey: string }): void {
     const { oldKey, newKey } = event;
+
     if (!newKey) {
-      return;
+        return;
     }
 
     const updatedFilters = { ...this.filtersData };
-    const queryValueToSave = (this.filterValue && this.filterValue !== 'status = "all"') ? this.filterValue : [];
+    const queryValueToSave = this.filterValue ?? [];
 
-    if (!oldKey) {
-      updatedFilters[newKey] = queryValueToSave;
-    } else {
-      updatedFilters[newKey] = queryValueToSave;
-      if (oldKey !== newKey) {
+    updatedFilters[newKey] = queryValueToSave;
+
+    if (oldKey && oldKey !== newKey) {
         delete updatedFilters[oldKey];
-      }
     }
 
     this.wasabiService.post('/api/filters', { AdvancedFilters: updatedFilters }).subscribe({
       next: (response: FirmGridSetting) => {
-        this.filtersData = response.AdvancedFilters || {};
+        this.filtersData = updatedFilters || {};
         this.selectedFilterKey = newKey;
         this.filterValue = this.filtersData[newKey] || [];
       },
@@ -128,25 +125,17 @@ export class AdvancedFiltersDialogComponent implements OnInit {
   }
 
   handleDelete(key: string): void {
-    if (!key) {
-      return;
-    }
+    const updatedFilters = { ...this.filtersData };
+    delete updatedFilters[key];
 
-    confirm('Are you sure you want to delete this filter?', 'Delete Confirmation').then((confirmed: boolean) => {
-      if (confirmed) {
-        const updatedFilters = { ...this.filtersData };
-        delete updatedFilters[key];
-
-        this.wasabiService.post('/api/filters', { AdvancedFilters: updatedFilters }).subscribe({
-          next: (response: FirmGridSetting) => {
-            this.filtersData = response.AdvancedFilters || {};
-            this.selectedFilterKey = null;
-            this.filterValue = [];
-          },
-          error: (err) => {
-            console.error('Failed to delete filter', err);
-          }
-        });
+    this.wasabiService.post('/api/filters', { AdvancedFilters: updatedFilters }).subscribe({
+      next: (response: FirmGridSetting) => {
+        this.filtersData = updatedFilters || {};
+        this.selectedFilterKey = null;
+        this.filterValue = [];
+      },
+      error: (err) => {
+        console.error('Failed to delete filter', err);
       }
     });
   }

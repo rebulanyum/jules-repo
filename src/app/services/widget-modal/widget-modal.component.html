@@ -1,0 +1,9 @@
+<div class="widget-modal" attr.id="{{_widgetID}}">
+	<h5 mat-dialog-title attr.id="{{_widgetID}}__header">{{_data.title}}</h5>
+    <div *ngIf="_data.prompt" class="content" mat-dialog-content attr.id="{{_widgetID}}__body">{{_data.prompt}}</div>
+    <div *ngIf="_data.html" class="content" mat-dialog-content attr.id="{{_widgetID}}__body" [innerHTML]="getHtml()"></div>
+	<div class="footer" mat-dialog-actions attr.id="{{_widgetID}}__footer">
+        <button *ngIf="_data.cancelText" mat-button (click)="_onCancel()" [id]="_widgetID + '__button__cancel'">{{_data.cancelText}}</button>
+        <button *ngIf="_data.okText" mat-flat-button (click)="_onOK()" [id]="_widgetID + '__button__ok'">{{_data.okText}}</button>
+	</div>
+</div>

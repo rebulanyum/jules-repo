@@ -12,8 +12,8 @@
     [filters]="filtersData"
     [selectedKey]="selectedFilterKey"
     [queryValue]="filterValue"
-    (selectedKeyChange)="onSelectedKeyChange($event)"
-    (saveRename)="handleRename($event)"
+    (selectedKeyChange)="handleSelectedKeyChange($event)"
+    (saveRename)="handleSaveRename($event)"
     (deleteFilter)="handleDelete($event)"
     (editCanceled)="handleCancel()">
   </filter-builder-toolbar>
